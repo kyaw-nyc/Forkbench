@@ -1,15 +1,22 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 import type { ModelId, ModelResponse, StreamEvent } from '@/types/bench'
-import { ModelSelector } from '@/components/bench/model-selector'
+import { ModelSelector, type ViewMode } from '@/components/bench/model-selector'
 import { ComparisonGrid } from '@/components/bench/comparison-grid'
-import { MetricsPanel } from '@/components/bench/metrics-panel'
 import Squares from '@/components/landing/squares'
-import { Send, Loader2, Menu, X } from 'lucide-react'
+import { Send, Loader2, Menu, X, MessageSquare } from 'lucide-react'
+
+// Chat history item type
+interface ChatHistoryItem {
+  id: string
+  prompt: string
+  responses: ModelResponse[]
+  timestamp: Date
+}
 
 export default function BenchPage() {
   const router = useRouter()
@@ -21,6 +28,11 @@ export default function BenchPage() {
   const [streamingData, setStreamingData] = useState<Record<string, string>>({})
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [rightPanelOpen, setRightPanelOpen] = useState(true)
+  const [viewMode, setViewMode] = useState<ViewMode>('parallel')
+  const [showPerformance, setShowPerformance] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([])
+  const [currentPrompt, setCurrentPrompt] = useState('')
 
   // Check auth
   useEffect(() => {
@@ -53,6 +65,20 @@ export default function BenchPage() {
       sessionStorage.removeItem('pendingPrompt')
     }
 
+    // Fetch chat history from Supabase
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch('/api/history')
+        if (response.ok) {
+          const data = await response.json()
+          setChatHistory(data.history || [])
+        }
+      } catch (error) {
+        console.error('Failed to fetch history:', error)
+      }
+    }
+    fetchHistory()
+
     // Cleanup subscription
     return () => {
       subscription.unsubscribe()
@@ -62,10 +88,17 @@ export default function BenchPage() {
   const handleRunTest = async () => {
     if (!prompt.trim() || selectedModels.length === 0 || isLoading) return
 
+    const currentPromptText = prompt.trim()
+    setCurrentPrompt(currentPromptText)
     setIsLoading(true)
     setResponses([])
     setStreamingData({})
     setPrompt('')
+
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto'
+    }
 
     try {
       const response = await fetch('/api/bench/run-test', {
@@ -74,7 +107,7 @@ export default function BenchPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: prompt.trim(),
+          prompt: currentPromptText,
           modelIds: selectedModels,
           temperature: 0.7,
           maxTokens: 2000,
@@ -111,6 +144,29 @@ export default function BenchPage() {
                 setResponses(event.results)
                 setStreamingData({})
                 setIsLoading(false)
+                // Save to Supabase and update local state
+                fetch('/api/history', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    prompt: currentPromptText,
+                    responses: event.results
+                  })
+                })
+                  .then(async saveResponse => {
+                    if (saveResponse.ok) {
+                      return saveResponse.json()
+                    }
+                    const errorData = await saveResponse.json()
+                    console.error('Save history error:', errorData)
+                    throw new Error(errorData.error || 'Failed to save')
+                  })
+                  .then(({ item }) => {
+                    setChatHistory(prev => [item, ...prev].slice(0, 15))
+                  })
+                  .catch(error => {
+                    console.error('Failed to save history:', error)
+                  })
               } else if (event.type === 'chunk') {
                 const streamEvent = event as StreamEvent
                 setStreamingData((prev) => ({
@@ -156,9 +212,9 @@ export default function BenchPage() {
   // Get greeting based on time of day
   const getGreeting = () => {
     const hour = new Date().getHours()
-    if (hour < 12) return 'Good Morning'
-    if (hour < 18) return 'Good Afternoon'
-    return 'Good Evening'
+    if (hour < 12) return 'Good Morning,'
+    if (hour < 18) return 'Good Afternoon,'
+    return 'Good Evening,'
   }
 
   // Get user's first name
@@ -214,7 +270,14 @@ export default function BenchPage() {
         {/* Model Selector */}
         {sidebarOpen && (
           <div className="flex-1 overflow-y-auto p-4">
-            <ModelSelector selectedModels={selectedModels} onSelectionChange={setSelectedModels} />
+            <ModelSelector
+              selectedModels={selectedModels}
+              onSelectionChange={setSelectedModels}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              showPerformance={showPerformance}
+              onShowPerformanceChange={setShowPerformance}
+            />
           </div>
         )}
 
@@ -246,7 +309,7 @@ export default function BenchPage() {
               <h1 className="text-4xl font-light tracking-tight text-white mb-2">
                 {getGreeting()} {getUserName()}
               </h1>
-              <p className="text-white/60 mb-8">How can I help you today?</p>
+              <p className="text-white/60 mb-8">Get multiple answer variations from different AI models</p>
 
               {/* Prompt Input */}
               <div className="relative rounded-xl border border-white/20 bg-white/5 p-4 backdrop-blur-sm">
@@ -254,7 +317,7 @@ export default function BenchPage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Tell me what you need..."
+                  placeholder="Enter your question or problem..."
                   rows={4}
                   className="w-full resize-none bg-transparent text-sm text-white placeholder-white/40 outline-none"
                 />
@@ -283,7 +346,7 @@ export default function BenchPage() {
             <div className={`flex-1 flex flex-col transition-all duration-300 ${rightPanelOpen ? 'pr-[320px]' : 'pr-[60px]'}`}>
               {/* Scrollable Results */}
               <div className="flex-1 overflow-y-auto p-8 pb-32">
-                <ComparisonGrid responses={displayResponses} isLoading={isLoading} />
+                <ComparisonGrid responses={displayResponses} isLoading={isLoading} viewMode={viewMode} showPerformance={showPerformance} />
               </div>
 
               {/* Fixed Bottom Input */}
@@ -291,6 +354,7 @@ export default function BenchPage() {
                 <div className="max-w-4xl mx-auto">
                   <div className="rounded-xl border border-white/20 bg-white/5 p-4 backdrop-blur-sm">
                     <textarea
+                      ref={textareaRef}
                       value={prompt}
                       onChange={(e) => {
                         setPrompt(e.target.value)
@@ -299,7 +363,7 @@ export default function BenchPage() {
                         e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder="Enter your prompt here... (Cmd/Ctrl + Enter to run)"
+                      placeholder="Ask another question... (Cmd/Ctrl + Enter to send)"
                       rows={1}
                       className="w-full resize-none bg-transparent text-sm text-white placeholder-white/40 outline-none overflow-hidden"
                       style={{ minHeight: '24px', maxHeight: '200px' }}
@@ -311,18 +375,12 @@ export default function BenchPage() {
                       <button
                         onClick={handleRunTest}
                         disabled={!prompt.trim() || selectedModels.length === 0 || isLoading}
-                        className="flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="rounded-lg bg-white p-2 text-black transition hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isLoading ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Testing...
-                          </>
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                          <>
-                            <Send className="h-4 w-4" />
-                            Run Test
-                          </>
+                          <Send className="h-4 w-4" />
                         )}
                       </button>
                     </div>
@@ -331,28 +389,50 @@ export default function BenchPage() {
               </div>
             </div>
 
-            {/* Fixed Right Panel - Performance Summary */}
+            {/* Fixed Right Panel - Chat History */}
             <aside className={`fixed right-0 top-0 z-20 h-full flex flex-col border-l border-white/10 bg-black backdrop-blur-sm transition-all duration-300 ${rightPanelOpen ? 'w-[320px]' : 'w-[60px]'}`}>
               {/* Header with toggle */}
               <div className={`flex items-center p-4 border-b border-white/10 ${rightPanelOpen ? 'justify-between' : 'justify-center'}`}>
                 {rightPanelOpen && (
-                  <h3 className="text-sm font-semibold text-white">Performance Summary</h3>
+                  <h3 className="text-sm font-semibold text-white">History</h3>
                 )}
                 <button
                   onClick={() => setRightPanelOpen(!rightPanelOpen)}
                   className="rounded-md p-2 text-white/60 hover:text-white hover:bg-white/10 transition"
                 >
-                  {rightPanelOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                  {rightPanelOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
                 </button>
               </div>
 
               {/* Content */}
               {rightPanelOpen && (
                 <div className="flex-1 overflow-y-auto p-4">
-                  {responses.length > 0 && !isLoading ? (
-                    <MetricsPanel responses={responses} />
+                  {chatHistory.length > 0 ? (
+                    <div className="space-y-3">
+                      {chatHistory.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            setResponses(item.responses)
+                            setCurrentPrompt(item.prompt)
+                          }}
+                          className={`w-full text-left p-3 rounded-lg border transition hover:bg-white/10 ${
+                            currentPrompt === item.prompt && responses === item.responses
+                              ? 'border-white/40 bg-white/10'
+                              : 'border-white/10 bg-white/5'
+                          }`}
+                        >
+                          <p className="text-sm text-white line-clamp-2 mb-1">
+                            {item.prompt}
+                          </p>
+                          <p className="text-xs text-white/40">
+                            {item.responses.length} model{item.responses.length !== 1 ? 's' : ''} • {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
                   ) : (
-                    <p className="text-sm text-white/40">Run a test to see performance metrics</p>
+                    <p className="text-sm text-white/40">Your chat history will appear here</p>
                   )}
                 </div>
               )}

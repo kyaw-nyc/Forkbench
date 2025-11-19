@@ -11,7 +11,7 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
     name: 'GPT-4o',
     provider: 'openai',
     description: 'OpenAI flagship model - Fast, multimodal',
-    color: 'blue',
+    color: 'white',
     costPer1kTokens: {
       input: 0.0025,
       output: 0.01,
@@ -22,21 +22,10 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
     name: 'GPT-4o Mini',
     provider: 'openai',
     description: 'Smaller, faster GPT-4o - Cost-effective',
-    color: 'blue',
+    color: 'white',
     costPer1kTokens: {
       input: 0.00015,
       output: 0.0006,
-    },
-  },
-  'gpt-4-turbo': {
-    id: 'gpt-4-turbo',
-    name: 'GPT-4 Turbo',
-    provider: 'openai',
-    description: 'Previous gen flagship - 128k context',
-    color: 'blue',
-    costPer1kTokens: {
-      input: 0.01,
-      output: 0.03,
     },
   },
   'anthropic/claude-3.5-sonnet': {
@@ -44,7 +33,7 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
     name: 'Claude 3.5 Sonnet',
     provider: 'anthropic',
     description: 'Anthropic flagship - Best reasoning',
-    color: 'purple',
+    color: 'orange',
     costPer1kTokens: {
       input: 0.003,
       output: 0.015,
@@ -55,7 +44,7 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
     name: 'Claude 3 Opus',
     provider: 'anthropic',
     description: 'Highest quality - Complex tasks',
-    color: 'purple',
+    color: 'orange',
     costPer1kTokens: {
       input: 0.015,
       output: 0.075,
@@ -66,7 +55,7 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
     name: 'Claude 3 Haiku',
     provider: 'anthropic',
     description: 'Fastest Claude - Low latency',
-    color: 'purple',
+    color: 'orange',
     costPer1kTokens: {
       input: 0.00025,
       output: 0.00125,
@@ -83,26 +72,26 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
       output: 0.00028,
     },
   },
-  'google/gemini-2.0-flash-exp:free': {
-    id: 'google/gemini-2.0-flash-exp:free',
-    name: 'Gemini 2.0 Flash',
+  'google/gemini-2.5-flash-preview': {
+    id: 'google/gemini-2.5-flash-preview',
+    name: 'Gemini 2.5 Flash',
     provider: 'google',
-    description: 'Latest Gemini - Free tier',
-    color: 'orange',
+    description: 'Latest Gemini - Fast and capable',
+    color: 'red',
     costPer1kTokens: {
-      input: 0,
-      output: 0,
+      input: 0.00015,
+      output: 0.0006,
     },
   },
-  'google/gemini-flash-1.5-8b': {
-    id: 'google/gemini-flash-1.5-8b',
-    name: 'Gemini 1.5 Flash 8B',
+  'google/gemini-2.0-flash-001': {
+    id: 'google/gemini-2.0-flash-001',
+    name: 'Gemini 2.0 Flash',
     provider: 'google',
-    description: 'Smaller Gemini - Very affordable',
-    color: 'orange',
+    description: 'Gemini 2.0 - Very affordable',
+    color: 'red',
     costPer1kTokens: {
-      input: 0.000075,
-      output: 0.0003,
+      input: 0.0001,
+      output: 0.0004,
     },
   },
   'openrouter/sherlock-think-alpha': {

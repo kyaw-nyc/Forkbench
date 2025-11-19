@@ -1,3 +1,12 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/history/route": "app/api/history/route.js",
+  "/icon.svg/route": "app/icon.svg/route.js",
+  "/api/bench/run-test/route": "app/api/bench/run-test/route.js",
+  "/bench/page": "app/bench/page.js",
+  "/learn-more/page": "app/learn-more/page.js",
+  "/login/page": "app/login/page.js",
+  "/logout/page": "app/logout/page.js",
+  "/signup/page": "app/signup/page.js",
   "/page": "app/page.js"
 }

@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components/landing/landing-content.tsx -> @/components/PixelBlast\":{\"id\":\"components/landing/landing-content.tsx -> @/components/PixelBlast\",\"files\":[\"static/chunks/_app-pages-browser_components_PixelBlast_jsx.js\"]}}"
+self.__REACT_LOADABLE_MANIFEST='{"components/landing/landing-content.tsx -> @/components/PixelBlast":{"id":202,"files":["static/chunks/b536a0f1.93f508ea078ad976.js","static/chunks/bd904a5c.a1243b7bab8d9a17.js","static/chunks/a3cd4a83.b550fff4b5e16697.js","static/chunks/202.5c24d83d5a725907.js"]}}';

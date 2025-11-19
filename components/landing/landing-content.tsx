@@ -76,9 +76,9 @@ export function LandingContent() {
             </p>
 
 
-            {/* Glossy Input Box */}
+            {/* Input Box */}
             <form onSubmit={handleSubmit} className="w-full max-w-2xl">
-              <div className="relative rounded-xl border border-white/20 bg-white/5 p-4 shadow-2xl backdrop-blur-sm">
+              <div className="relative rounded-xl border border-white/20 bg-black/50 p-4 shadow-2xl">
                 <textarea
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}

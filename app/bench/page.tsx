@@ -250,10 +250,10 @@ export default function BenchPage() {
         </div>
       )}
 
-      {/* Fixed Left Sidebar */}
-      <aside className={`fixed left-0 top-0 z-20 flex h-full flex-col border-r border-white/10 bg-black/90 backdrop-blur-sm transition-all duration-300 ${sidebarOpen ? 'w-[420px]' : 'w-[60px]'}`}>
+      {/* Fixed Left Sidebar - Chat History */}
+      <aside className={`fixed left-0 top-0 z-20 flex h-full flex-col border-r border-white/10 bg-black/90 backdrop-blur-sm transition-all duration-300 ${sidebarOpen ? 'w-[320px]' : 'w-[60px]'}`}>
         {/* Header with toggle */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <div className={`flex items-center p-4 border-b border-white/10 ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
           {sidebarOpen && (
             <Link href="/" className="text-lg font-semibold text-white">
               LLM Bench
@@ -263,21 +263,40 @@ export default function BenchPage() {
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="rounded-md p-2 text-white/60 hover:text-white hover:bg-white/10 transition"
           >
-            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {sidebarOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Model Selector */}
+        {/* Chat History */}
         {sidebarOpen && (
           <div className="flex-1 overflow-y-auto p-4">
-            <ModelSelector
-              selectedModels={selectedModels}
-              onSelectionChange={setSelectedModels}
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-              showPerformance={showPerformance}
-              onShowPerformanceChange={setShowPerformance}
-            />
+            {chatHistory.length > 0 ? (
+              <div className="space-y-3">
+                {chatHistory.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setResponses(item.responses)
+                      setCurrentPrompt(item.prompt)
+                    }}
+                    className={`w-full text-left p-3 rounded-lg border transition hover:bg-white/10 ${
+                      currentPrompt === item.prompt && responses === item.responses
+                        ? 'border-white/40 bg-white/10'
+                        : 'border-white/10 bg-white/5'
+                    }`}
+                  >
+                    <p className="text-sm text-white line-clamp-2 mb-1">
+                      {item.prompt}
+                    </p>
+                    <p className="text-xs text-white/40">
+                      {item.responses.length} model{item.responses.length !== 1 ? 's' : ''} • {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-white/40">Your chat history will appear here</p>
+            )}
           </div>
         )}
 
@@ -301,7 +320,7 @@ export default function BenchPage() {
       </aside>
 
       {/* Main Content */}
-      <main className={`relative z-10 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-[420px]' : 'ml-[60px]'}`}>
+      <main className={`relative z-10 min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-[320px]' : 'ml-[60px]'} ${rightPanelOpen ? 'mr-[420px]' : 'mr-[60px]'}`}>
         {responses.length === 0 && !isLoading ? (
           // Welcome Screen
           <div className="flex min-h-screen flex-col items-center justify-center px-8">
@@ -334,112 +353,90 @@ export default function BenchPage() {
 
               {selectedModels.length === 0 && (
                 <p className="mt-4 text-xs text-white/40">
-                  Select models from the sidebar to begin
+                  Select models from the right panel to begin
                 </p>
               )}
             </div>
           </div>
         ) : (
-          // Results View with bottom input and right panel
-          <div className="flex min-h-screen">
-            {/* Main Results Area */}
-            <div className={`flex-1 flex flex-col transition-all duration-300 ${rightPanelOpen ? 'pr-[320px]' : 'pr-[60px]'}`}>
-              {/* Scrollable Results */}
-              <div className="flex-1 overflow-y-auto p-8 pb-32">
-                <ComparisonGrid responses={displayResponses} isLoading={isLoading} viewMode={viewMode} showPerformance={showPerformance} />
-              </div>
+          // Results View with bottom input
+          <div className="flex min-h-screen flex-col">
+            {/* Scrollable Results */}
+            <div className="flex-1 overflow-y-auto p-8 pb-32">
+              <ComparisonGrid responses={displayResponses} isLoading={isLoading} viewMode={viewMode} showPerformance={showPerformance} />
+            </div>
 
-              {/* Fixed Bottom Input */}
-              <div className="fixed bottom-0 left-0 z-30 bg-gradient-to-t from-black via-black to-transparent pt-8 pb-6 px-8 transition-all duration-300" style={{ marginLeft: sidebarOpen ? '420px' : '60px', right: rightPanelOpen ? '320px' : '60px' }}>
-                <div className="max-w-4xl mx-auto">
-                  <div className="rounded-xl border border-white/20 bg-white/5 p-4 backdrop-blur-sm">
-                    <textarea
-                      ref={textareaRef}
-                      value={prompt}
-                      onChange={(e) => {
-                        setPrompt(e.target.value)
-                        // Auto-resize textarea
-                        e.target.style.height = 'auto'
-                        e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
-                      }}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Ask another question... (Cmd/Ctrl + Enter to send)"
-                      rows={1}
-                      className="w-full resize-none bg-transparent text-sm text-white placeholder-white/40 outline-none overflow-hidden"
-                      style={{ minHeight: '24px', maxHeight: '200px' }}
-                    />
-                    <div className="mt-3 flex items-center justify-between">
-                      <div className="text-xs text-white/60">
-                        {selectedModels.length} model{selectedModels.length !== 1 ? 's' : ''} selected
-                      </div>
-                      <button
-                        onClick={handleRunTest}
-                        disabled={!prompt.trim() || selectedModels.length === 0 || isLoading}
-                        className="rounded-lg bg-white p-2 text-black transition hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {isLoading ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Send className="h-4 w-4" />
-                        )}
-                      </button>
+            {/* Fixed Bottom Input */}
+            <div className="fixed bottom-0 left-0 z-30 bg-gradient-to-t from-black via-black to-transparent pt-8 pb-6 px-8 transition-all duration-300" style={{ marginLeft: sidebarOpen ? '320px' : '60px', right: rightPanelOpen ? '420px' : '60px' }}>
+              <div className="max-w-4xl mx-auto">
+                <div className="rounded-xl border border-white/20 bg-white/5 p-4 backdrop-blur-sm">
+                  <textarea
+                    ref={textareaRef}
+                    value={prompt}
+                    onChange={(e) => {
+                      setPrompt(e.target.value)
+                      // Auto-resize textarea
+                      e.target.style.height = 'auto'
+                      e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px'
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Ask another question... (Cmd/Ctrl + Enter to send)"
+                    rows={1}
+                    className="w-full resize-none bg-transparent text-sm text-white placeholder-white/40 outline-none overflow-hidden"
+                    style={{ minHeight: '24px', maxHeight: '200px' }}
+                  />
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="text-xs text-white/60">
+                      {selectedModels.length} model{selectedModels.length !== 1 ? 's' : ''} selected
                     </div>
+                    <button
+                      onClick={handleRunTest}
+                      disabled={!prompt.trim() || selectedModels.length === 0 || isLoading}
+                      className="rounded-lg bg-white p-2 text-black transition hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Fixed Right Panel - Chat History */}
-            <aside className={`fixed right-0 top-0 z-20 h-full flex flex-col border-l border-white/10 bg-black backdrop-blur-sm transition-all duration-300 ${rightPanelOpen ? 'w-[320px]' : 'w-[60px]'}`}>
-              {/* Header with toggle */}
-              <div className={`flex items-center p-4 border-b border-white/10 ${rightPanelOpen ? 'justify-between' : 'justify-center'}`}>
-                {rightPanelOpen && (
-                  <h3 className="text-sm font-semibold text-white">History</h3>
-                )}
-                <button
-                  onClick={() => setRightPanelOpen(!rightPanelOpen)}
-                  className="rounded-md p-2 text-white/60 hover:text-white hover:bg-white/10 transition"
-                >
-                  {rightPanelOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
-                </button>
-              </div>
-
-              {/* Content */}
-              {rightPanelOpen && (
-                <div className="flex-1 overflow-y-auto p-4">
-                  {chatHistory.length > 0 ? (
-                    <div className="space-y-3">
-                      {chatHistory.map((item) => (
-                        <button
-                          key={item.id}
-                          onClick={() => {
-                            setResponses(item.responses)
-                            setCurrentPrompt(item.prompt)
-                          }}
-                          className={`w-full text-left p-3 rounded-lg border transition hover:bg-white/10 ${
-                            currentPrompt === item.prompt && responses === item.responses
-                              ? 'border-white/40 bg-white/10'
-                              : 'border-white/10 bg-white/5'
-                          }`}
-                        >
-                          <p className="text-sm text-white line-clamp-2 mb-1">
-                            {item.prompt}
-                          </p>
-                          <p className="text-xs text-white/40">
-                            {item.responses.length} model{item.responses.length !== 1 ? 's' : ''} • {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-white/40">Your chat history will appear here</p>
-                  )}
-                </div>
-              )}
-            </aside>
           </div>
         )}
       </main>
+
+      {/* Fixed Right Sidebar - Model Selector */}
+      <aside className={`fixed right-0 top-0 z-20 flex h-full flex-col border-l border-white/10 bg-black/90 backdrop-blur-sm transition-all duration-300 ${rightPanelOpen ? 'w-[420px]' : 'w-[60px]'}`}>
+        {/* Header with toggle */}
+        <div className={`flex items-center p-4 border-b border-white/10 ${rightPanelOpen ? 'justify-between' : 'justify-center'}`}>
+          {rightPanelOpen && (
+            <h3 className="text-sm font-semibold text-white">Models</h3>
+          )}
+          <button
+            onClick={() => setRightPanelOpen(!rightPanelOpen)}
+            className="rounded-md p-2 text-white/60 hover:text-white hover:bg-white/10 transition"
+          >
+            {rightPanelOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {/* Model Selector */}
+        {rightPanelOpen && (
+          <div className="flex-1 overflow-y-auto">
+            <ModelSelector
+              selectedModels={selectedModels}
+              onSelectionChange={setSelectedModels}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              showPerformance={showPerformance}
+              onShowPerformanceChange={setShowPerformance}
+            />
+          </div>
+        )}
+      </aside>
     </div>
   )
 }

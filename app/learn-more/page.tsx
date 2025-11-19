@@ -3,25 +3,22 @@ import Image from 'next/image'
 
 export default function LearnMorePage() {
   return (
-    <div className="relative isolate min-h-screen w-full overflow-hidden bg-black text-white">
-      <div className="pointer-events-none relative z-10 flex min-h-screen flex-col">
-        <div className="absolute left-0 right-0 top-0 h-[76px] bg-black/80" />
-
-        <header className="relative flex items-center justify-between px-8 py-5 lg:px-16">
-          <Link
-            href="/"
-            className="pointer-events-auto flex items-center gap-2 text-base font-semibold tracking-tight text-white transition hover:text-white/80"
-          >
-            <Image src="/logo.svg" alt="ForkBench" width={20} height={20} className="invert" />
-            ForkBench
-          </Link>
-          <div className="pointer-events-auto flex items-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-md border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white hover:text-[#080705]"
-            >
-              Log in
+    <div className="relative isolate min-h-screen w-full overflow-hidden bg-[#0a0a0a] text-white">
+      <div className="relative z-10 flex min-h-screen flex-col">
+        <header className="relative flex items-center justify-center px-8 py-6 lg:px-16">
+          <div className="flex w-full max-w-6xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-8 py-4 backdrop-blur-md">
+            <Link href="/" className="flex items-center gap-2">
+              <Image src="/logo.svg" alt="ForkBench" width={24} height={24} className="invert" />
+              <span className="text-base font-semibold tracking-tight text-white">ForkBench</span>
             </Link>
+            <nav className="flex items-center">
+              <Link
+                href="/login"
+                className="text-sm font-medium text-white/80 transition hover:text-white"
+              >
+                Login
+              </Link>
+            </nav>
           </div>
         </header>
 

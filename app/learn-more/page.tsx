@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function LearnMorePage() {
   return (
@@ -9,9 +10,10 @@ export default function LearnMorePage() {
         <header className="relative flex items-center justify-between px-8 py-5 lg:px-16">
           <Link
             href="/"
-            className="pointer-events-auto text-base font-semibold tracking-tight text-white transition hover:text-white/80"
+            className="pointer-events-auto flex items-center gap-2 text-base font-semibold tracking-tight text-white transition hover:text-white/80"
           >
-            PolyModels
+            <Image src="/logo.svg" alt="ForkGrid" width={20} height={20} className="invert" />
+            ForkGrid
           </Link>
           <div className="pointer-events-auto flex items-center gap-3">
             <Link

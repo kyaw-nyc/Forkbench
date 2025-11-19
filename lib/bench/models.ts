@@ -1,5 +1,5 @@
 /**
- * Model configurations for PolyModels
+ * Model configurations for ForkGrid
  * Defines available models, their providers, and cost structures
  */
 

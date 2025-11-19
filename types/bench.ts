@@ -1,5 +1,5 @@
 /**
- * TypeScript types for PolyModels functionality
+ * TypeScript types for ForkGrid functionality
  */
 
 export type ModelId =

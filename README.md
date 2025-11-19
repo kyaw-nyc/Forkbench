@@ -1,4 +1,4 @@
-# PolyModels - Side-by-Side Model Comparison Tool
+# ForkGrid - Side-by-Side Model Comparison Tool
 
 A developer-focused platform for testing and comparing multiple Large Language Models in real-time. Run the same prompt across GPT-4, Claude, DeepSeek, and more—see response quality, track costs, and measure performance metrics side-by-side.
 

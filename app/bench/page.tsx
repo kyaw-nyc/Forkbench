@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 import type { ModelId, ModelResponse, StreamEvent } from '@/types/bench'
@@ -282,8 +283,9 @@ export default function BenchPage() {
         {/* Header with toggle */}
         <div className={`flex items-center p-4 border-b border-white/10 ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
           {sidebarOpen && (
-            <Link href="/" className="text-lg font-semibold text-white">
-              PolyModels
+            <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-white">
+              <Image src="/logo.svg" alt="ForkGrid" width={20} height={20} className="invert" />
+              ForkGrid
             </Link>
           )}
           <button

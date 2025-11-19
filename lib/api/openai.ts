@@ -1,5 +1,5 @@
 /**
- * OpenAI API client for PolyModels
+ * OpenAI API client for ForkGrid
  * Used by the executor to call GPT models directly
  */
 

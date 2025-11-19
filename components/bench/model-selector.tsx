@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import type { ModelId, ModelConfig } from '@/types/bench'
 import { getAllModels, getModelsByProvider } from '@/lib/bench/models'
-import { Card } from '@/components/ui/card'
 import { Check, LayoutGrid, Layers, BarChart3 } from 'lucide-react'
 
 export type ViewMode = 'parallel' | 'tabbed'
@@ -52,7 +51,7 @@ export function ModelSelector({ selectedModels, onSelectionChange, viewMode, onV
   } : { all: allModels }
 
   return (
-    <Card className="border-white/20 bg-white/5 p-6 backdrop-blur-sm">
+    <div className="p-6">
       {/* View Mode Toggle */}
       <div className="mb-4">
         <div className="text-xs text-white/60 mb-2">View Mode</div>
@@ -199,6 +198,6 @@ export function ModelSelector({ selectedModels, onSelectionChange, viewMode, onV
           Select at least one model to start testing
         </div>
       )}
-    </Card>
+    </div>
   )
 }

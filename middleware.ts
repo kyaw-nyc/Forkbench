@@ -27,20 +27,20 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Check if user is authenticated
+  // Use getSession() first which reads from cookies (faster than getUser() which makes network call)
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession()
 
   // If user is not authenticated and trying to access protected route, redirect to login
-  if (!user && request.nextUrl.pathname.startsWith('/bench')) {
+  if (!session?.user && request.nextUrl.pathname.startsWith('/bench')) {
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
     return NextResponse.redirect(redirectUrl)
   }
 
   // If user is authenticated and trying to access login/signup, redirect to bench
-  if (user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup'))) {
+  if (session?.user && (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup'))) {
     return NextResponse.redirect(new URL('/bench', request.url))
   }
 

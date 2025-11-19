@@ -3,12 +3,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 import type { ModelId, ModelResponse, StreamEvent } from '@/types/bench'
 import { ModelSelector, type ViewMode } from '@/components/bench/model-selector'
 import { ComparisonGrid } from '@/components/bench/comparison-grid'
-import Squares from '@/components/landing/squares'
 import { Send, Loader2, Menu, X, MessageSquare } from 'lucide-react'
+
+// Lazy load Squares component to improve initial page load
+const Squares = dynamic(() => import('@/components/landing/squares'), {
+  ssr: false,
+  loading: () => <div className="h-full w-full bg-black" />
+})
 
 // Chat history item type
 interface ChatHistoryItem {
@@ -33,6 +39,10 @@ export default function BenchPage() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([])
   const [currentPrompt, setCurrentPrompt] = useState('')
+
+  // Throttle streaming updates to reduce re-renders
+  const streamBufferRef = useRef<Record<string, string>>({})
+  const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Check auth
   useEffect(() => {
@@ -93,6 +103,7 @@ export default function BenchPage() {
     setIsLoading(true)
     setResponses([])
     setStreamingData({})
+    streamBufferRef.current = {}
     setPrompt('')
 
     // Reset textarea height
@@ -141,8 +152,14 @@ export default function BenchPage() {
                 JSON.parse(eventData)
 
               if (event.type === 'done' && 'results' in event) {
+                // Clear any pending throttle
+                if (throttleTimeoutRef.current) {
+                  clearTimeout(throttleTimeoutRef.current)
+                  throttleTimeoutRef.current = null
+                }
                 setResponses(event.results)
                 setStreamingData({})
+                streamBufferRef.current = {}
                 setIsLoading(false)
                 // Save to Supabase and update local state
                 fetch('/api/history', {
@@ -169,10 +186,20 @@ export default function BenchPage() {
                   })
               } else if (event.type === 'chunk') {
                 const streamEvent = event as StreamEvent
-                setStreamingData((prev) => ({
-                  ...prev,
-                  [streamEvent.modelId]: (prev[streamEvent.modelId] || '') + (streamEvent.data || ''),
-                }))
+                // Buffer the chunk
+                streamBufferRef.current[streamEvent.modelId] =
+                  (streamBufferRef.current[streamEvent.modelId] || '') + (streamEvent.data || '')
+
+                // Throttle state updates to every 100ms to reduce re-renders
+                if (!throttleTimeoutRef.current) {
+                  throttleTimeoutRef.current = setTimeout(() => {
+                    setStreamingData((prev) => ({
+                      ...prev,
+                      ...streamBufferRef.current
+                    }))
+                    throttleTimeoutRef.current = null
+                  }, 100)
+                }
               } else if (event.type === 'error') {
                 console.error('Stream error:', event)
               }

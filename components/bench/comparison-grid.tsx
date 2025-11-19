@@ -2,26 +2,17 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import ReactMarkdown from 'react-markdown'
-import remarkMath from 'remark-math'
-import rehypeKatex from 'rehype-katex'
-import 'katex/dist/katex.min.css'
+import dynamic from 'next/dynamic'
 import type { ViewMode } from '@/components/bench/model-selector'
 
-// Convert various LaTeX delimiters to standard format for remark-math
-function preprocessLatex(text: string): string {
-  // Convert \( ... \) to $ ... $ (inline math)
-  let processed = text.replace(/\\\(([^)]+)\\\)/g, '$$$1$$')
-
-  // Convert \[ ... \] to $$ ... $$ (display math)
-  processed = processed.replace(/\\\[([^\]]+)\\\]/g, '$$$$$1$$$$')
-
-  // Convert [ ... ] used as display math (common in some LLM outputs)
-  // Only convert if it contains LaTeX commands like \vec, \frac, etc.
-  processed = processed.replace(/\[\s*([^\]]*\\(?:vec|frac|hat|sqrt|sin|cos|tan|int|sum|prod|lim|text|left|right)[^\]]*)\s*\]/g, '$$$$$1$$$$')
-
-  return processed
-}
+// Dynamically import ReactMarkdown with KaTeX support
+const MarkdownRenderer = dynamic(
+  () => import('./markdown-renderer').then(mod => ({ default: mod.MarkdownRenderer })),
+  {
+    ssr: false,
+    loading: () => <div className="animate-pulse text-white/40">Loading...</div>
+  }
+)
 import type { ModelResponse } from '@/types/bench'
 import { getModelConfig } from '@/lib/bench/models'
 import { Card } from '@/components/ui/card'
@@ -94,12 +85,7 @@ export function ComparisonGrid({ responses, isLoading = false, viewMode = 'paral
               <div className="mb-4 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3 max-h-[500px]">
                 <div className="prose prose-sm prose-invert max-w-none text-white/90 [&_.katex]:text-white [&_p]:my-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:my-2 [&_ol]:my-2 [&_li]:my-1">
                   {response.response ? (
-                    <ReactMarkdown
-                      remarkPlugins={[remarkMath]}
-                      rehypePlugins={[rehypeKatex]}
-                    >
-                      {preprocessLatex(response.response)}
-                    </ReactMarkdown>
+                    <MarkdownRenderer content={response.response} />
                   ) : (
                     <p>{isLoading ? 'Generating...' : 'No response'}</p>
                   )}
@@ -186,12 +172,7 @@ export function ComparisonGrid({ responses, isLoading = false, viewMode = 'paral
             <div className={`mb-4 overflow-y-auto rounded-lg border border-white/10 bg-black/20 p-3 ${isTabbed ? 'max-h-[500px]' : 'max-h-[300px]'}`}>
               <div className="prose prose-sm prose-invert max-w-none text-white/90 [&_.katex]:text-white [&_p]:my-2 [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2 [&_ul]:my-2 [&_ol]:my-2 [&_li]:my-1">
                 {response.response ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkMath]}
-                    rehypePlugins={[rehypeKatex]}
-                  >
-                    {preprocessLatex(response.response)}
-                  </ReactMarkdown>
+                  <MarkdownRenderer content={response.response} />
                 ) : (
                   <p>{isLoading ? 'Generating...' : 'No response'}</p>
                 )}

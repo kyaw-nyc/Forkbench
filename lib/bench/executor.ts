@@ -1,5 +1,5 @@
 /**
- * Parallel LLM Execution Engine
+ * Parallel Model Execution Engine
  * Runs the same prompt across multiple models simultaneously
  */
 

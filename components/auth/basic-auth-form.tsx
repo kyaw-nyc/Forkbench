@@ -55,7 +55,7 @@ export function BasicAuthForm({ defaultMode = 'login', className }: { defaultMod
   return (
     <div className={cn('w-full max-w-md rounded-xl bg-white/5 p-6 text-white shadow-lg', className)}>
       <div className="mb-6 space-y-1">
-        <p className="text-sm text-white/60">{mode === 'login' ? 'Welcome back' : 'Join LLM Bench'}</p>
+        <p className="text-sm text-white/60">{mode === 'login' ? 'Welcome back' : 'Join PolyModels'}</p>
         <h2 className="text-2xl font-semibold">{mode === 'login' ? 'Log in to continue' : 'Create your account'}</h2>
         <button
           type="button"

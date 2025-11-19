@@ -1,5 +1,5 @@
 /**
- * OpenAI API client for LLM Bench
+ * OpenAI API client for PolyModels
  * Used by the executor to call GPT models directly
  */
 

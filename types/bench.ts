@@ -1,5 +1,5 @@
 /**
- * TypeScript types for LLM Bench functionality
+ * TypeScript types for PolyModels functionality
  */
 
 export type ModelId =

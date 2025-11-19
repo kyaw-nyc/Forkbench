@@ -283,7 +283,7 @@ export default function BenchPage() {
         <div className={`flex items-center p-4 border-b border-white/10 ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
           {sidebarOpen && (
             <Link href="/" className="text-lg font-semibold text-white">
-              LLM Bench
+              PolyModels
             </Link>
           )}
           <button

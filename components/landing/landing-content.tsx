@@ -42,7 +42,7 @@ export function LandingContent() {
         <header className="relative flex items-center justify-center px-8 py-6 lg:px-16">
           <div className="pointer-events-auto flex w-full max-w-3xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-8 py-4 backdrop-blur-md">
             <div className="flex items-center gap-2">
-              <span className="text-base font-semibold tracking-tight text-white">LLM-Bench</span>
+              <span className="text-base font-semibold tracking-tight text-white">PolyModels</span>
             </div>
             <nav className="flex items-center">
               <button

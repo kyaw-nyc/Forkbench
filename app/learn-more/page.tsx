@@ -11,7 +11,7 @@ export default function LearnMorePage() {
             href="/"
             className="pointer-events-auto text-base font-semibold tracking-tight text-white transition hover:text-white/80"
           >
-            LLM Bench
+            PolyModels
           </Link>
           <div className="pointer-events-auto flex items-center gap-3">
             <Link

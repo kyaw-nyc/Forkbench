@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LLM Bench - Compare AI Models Side-by-Side",
+  title: "PolyModels - Compare AI Models Side-by-Side",
   description: "Test and compare multiple LLMs in real-time. Side-by-side responses, cost tracking, and performance metrics.",
 };
 

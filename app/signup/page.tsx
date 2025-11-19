@@ -8,7 +8,7 @@ export default function SignupPage() {
       <div className="flex flex-col items-center justify-center gap-8 px-8 py-12 md:px-14 md:py-16">
         <div className="w-full max-w-md space-y-8">
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold">Create your LLM Bench account</h1>
+            <h1 className="text-3xl font-semibold">Create your PolyModels account</h1>
             <p className="text-sm text-white/70">
               Sign up with email and password to start testing models.
             </p>

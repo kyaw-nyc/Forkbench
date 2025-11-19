@@ -1,5 +1,5 @@
 /**
- * Model configurations for LLM Bench
+ * Model configurations for PolyModels
  * Defines available models, their providers, and cost structures
  */
 

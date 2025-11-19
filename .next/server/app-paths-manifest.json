@@ -1,9 +1,3 @@
 {
-  "/api/history/route": "app/api/history/route.js",
-  "/api/bench/run-test/route": "app/api/bench/run-test/route.js",
-  "/icon.svg/route": "app/icon.svg/route.js",
-  "/page": "app/page.js",
-  "/login/page": "app/login/page.js",
-  "/bench/page": "app/bench/page.js",
-  "/logout/page": "app/logout/page.js"
+  "/page": "app/page.js"
 }

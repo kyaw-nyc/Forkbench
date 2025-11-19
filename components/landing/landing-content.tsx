@@ -2,7 +2,11 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Squares from './squares'
+import dynamic from 'next/dynamic'
+
+const PixelBlast = dynamic(() => import('@/components/PixelBlast'), {
+  ssr: false,
+})
 
 export function LandingContent() {
   const router = useRouter()
@@ -14,57 +18,64 @@ export function LandingContent() {
 
   return (
     <div className="relative isolate min-h-screen w-full overflow-hidden bg-[#0a0a0a] text-white">
-      <Squares
-        direction="diagonal"
-        speed={0.5}
-        squareSize={40}
-        borderColor="rgba(255,255,255,0.1)"
-        hoverFillColor="rgba(255,255,255,0.05)"
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-100"
-      />
+      <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0 }}>
+        <PixelBlast
+          variant="circle"
+          pixelSize={6}
+          color="#B19EEF"
+          patternScale={3}
+          patternDensity={1.2}
+          pixelSizeJitter={0.5}
+          enableRipples
+          rippleSpeed={0.4}
+          rippleThickness={0.12}
+          rippleIntensityScale={1.5}
+          liquid
+          liquidStrength={0.12}
+          liquidRadius={1.2}
+          liquidWobbleSpeed={5}
+          speed={0.6}
+          edgeFade={0.25}
+          transparent
+          autoPauseOffscreen={false}
+        />
+      </div>
 
       <div className="pointer-events-none relative z-10 flex min-h-screen flex-col">
-        <header className="relative flex items-center justify-between px-8 py-6 lg:px-16">
-          <div className="pointer-events-auto flex items-center gap-2">
-            <span className="text-base font-semibold tracking-tight text-white">LLM Bench</span>
+        <header className="relative flex items-center justify-center px-8 py-6 lg:px-16">
+          <div className="pointer-events-auto flex w-full max-w-3xl items-center justify-between rounded-full border border-white/10 bg-white/5 px-8 py-4 backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <span className="text-base font-semibold tracking-tight text-white">LLM-Bench</span>
+            </div>
+            <nav className="flex items-center">
+              <button
+                type="button"
+                onClick={handleGetStarted}
+                className="cursor-pointer text-sm font-medium text-white/80 transition hover:text-white"
+              >
+                Login
+              </button>
+            </nav>
           </div>
-          <nav className="pointer-events-auto flex items-center gap-6">
-            <Link
-              href="/learn-more"
-              className="text-sm font-medium text-white/80 transition hover:text-white"
-            >
-              Learn More
-            </Link>
-            <button
-              type="button"
-              onClick={handleGetStarted}
-              className="rounded-lg border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/15"
-            >
-              Login
-            </button>
-          </nav>
         </header>
 
         <main className="relative flex flex-1 items-center justify-center px-6 pb-16 pt-4 text-center lg:px-10">
           <div className="pointer-events-auto mx-auto flex w-full max-w-4xl flex-col items-center gap-8">
             <h1 className="text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
-              Benchmark LLMs Effortlessly
+              Benchmark LLMs <br></br>Effortlessly
             </h1>
-            <p className="max-w-2xl text-lg text-white/85">
-              Launch LLM Bench, compare providers, and get to the right model in minutes.
-            </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-4">
               <button
                 type="button"
                 onClick={handleGetStarted}
-                className="rounded-xl bg-white px-6 py-3 text-base font-semibold text-[#0a0a0a] shadow-[0_10px_30px_rgba(255,255,255,0.2)] transition hover:-translate-y-0.5 hover:bg-white/90"
+                className="cursor-pointer rounded-full bg-white px-8 py-3 text-base font-semibold text-[#0a0a0a] shadow-[0_10px_30px_rgba(255,255,255,0.2)] transition hover:-translate-y-0.5 hover:bg-white/90"
               >
                 Get Started
               </button>
               <Link
                 href="/learn-more"
-                className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/20"
+                className="rounded-full border border-white/15 bg-white/5 px-8 py-3 text-base font-semibold text-white/80 backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10"
               >
                 Learn More
               </Link>

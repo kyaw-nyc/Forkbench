@@ -1,0 +1,5 @@
+{
+  "/api/bench/run-test/route": "app/api/bench/run-test/route.js",
+  "/bench/page": "app/bench/page.js",
+  "/page": "app/page.js"
+}

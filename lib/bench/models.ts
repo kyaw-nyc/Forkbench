@@ -5,7 +5,7 @@
 
 import type { ModelConfig, ModelId } from '@/types/bench'
 
-export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
+export const AVAILABLE_MODELS: Record<string, ModelConfig> = {
   'gpt-4o': {
     id: 'gpt-4o',
     name: 'GPT-4o',
@@ -72,8 +72,8 @@ export const AVAILABLE_MODELS: Record<ModelId, ModelConfig> = {
       output: 0.00028,
     },
   },
-  'google/gemini-2.5-flash-preview': {
-    id: 'google/gemini-2.5-flash-preview',
+  'google/gemini-2.5-flash': {
+    id: 'google/gemini-2.5-flash',
     name: 'Gemini 2.5 Flash',
     provider: 'google',
     description: 'Latest Gemini - Fast and capable',

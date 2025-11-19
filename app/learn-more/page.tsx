@@ -12,8 +12,8 @@ export default function LearnMorePage() {
             href="/"
             className="pointer-events-auto flex items-center gap-2 text-base font-semibold tracking-tight text-white transition hover:text-white/80"
           >
-            <Image src="/logo.svg" alt="ForkGrid" width={20} height={20} className="invert" />
-            ForkGrid
+            <Image src="/logo.svg" alt="ForkBench" width={20} height={20} className="invert" />
+            ForkBench
           </Link>
           <div className="pointer-events-auto flex items-center gap-3">
             <Link

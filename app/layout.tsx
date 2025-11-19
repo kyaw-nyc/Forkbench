@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ForkGrid - Compare AI Models Side-by-Side",
+  title: "ForkBench - Compare AI Models Side-by-Side",
   description: "Test and compare multiple LLMs in real-time. Side-by-side responses, cost tracking, and performance metrics.",
 };
 

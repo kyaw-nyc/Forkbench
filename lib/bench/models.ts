@@ -1,5 +1,5 @@
 /**
- * Model configurations for ForkGrid
+ * Model configurations for ForkBench
  * Defines available models, their providers, and cost structures
  */
 

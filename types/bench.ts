@@ -1,5 +1,5 @@
 /**
- * TypeScript types for ForkGrid functionality
+ * TypeScript types for ForkBench functionality
  */
 
 export type ModelId =
@@ -9,7 +9,7 @@ export type ModelId =
   | 'anthropic/claude-3-opus'
   | 'anthropic/claude-3-haiku'
   | 'deepseek/deepseek-chat'
-  | 'google/gemini-2.5-flash-preview'
+  | 'google/gemini-2.5-flash'
   | 'google/gemini-2.0-flash-001'
   | 'openrouter/sherlock-think-alpha'
 

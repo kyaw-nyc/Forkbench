@@ -1,5 +1,5 @@
 /**
- * OpenAI API client for ForkGrid
+ * OpenAI API client for ForkBench
  * Used by the executor to call GPT models directly
  */
 

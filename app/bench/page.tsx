@@ -284,8 +284,8 @@ export default function BenchPage() {
         <div className={`flex items-center p-4 border-b border-white/10 ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
           {sidebarOpen && (
             <Link href="/" className="flex items-center gap-2 text-lg font-semibold text-white">
-              <Image src="/logo.svg" alt="ForkGrid" width={20} height={20} className="invert" />
-              ForkGrid
+              <Image src="/logo.svg" alt="ForkBench" width={20} height={20} className="invert" />
+              ForkBench
             </Link>
           )}
           <button

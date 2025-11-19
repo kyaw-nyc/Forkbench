@@ -1,106 +1,74 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Send } from 'lucide-react'
 import Squares from './squares'
 
 export function LandingContent() {
-  const [inputValue, setInputValue] = useState('')
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (inputValue.trim()) {
-      // Redirect to login with the input value stored
-      sessionStorage.setItem('pendingPrompt', inputValue)
-      router.push('/login')
-    }
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSubmit(e as any)
-    }
+  const handleGetStarted = () => {
+    sessionStorage.removeItem('pendingPrompt')
+    router.push('/login')
   }
 
   return (
-    <div className="relative isolate min-h-screen w-full overflow-hidden bg-black text-white">
-      <div className="absolute inset-0 z-0">
-        <Squares
-          direction="diagonal"
-          speed={0.45}
-          squareSize={46}
-          borderColor="rgba(255,255,255,0.25)"
-          hoverFillColor="rgba(255,255,255,0.15)"
-          className="h-full w-full"
-        />
-      </div>
+    <div className="relative isolate min-h-screen w-full overflow-hidden bg-[#0a0a0a] text-white">
+      <Squares
+        direction="diagonal"
+        speed={0.5}
+        squareSize={40}
+        borderColor="rgba(255,255,255,0.1)"
+        hoverFillColor="rgba(255,255,255,0.05)"
+        className="pointer-events-none absolute inset-0 h-full w-full opacity-100"
+      />
 
       <div className="pointer-events-none relative z-10 flex min-h-screen flex-col">
-        <div className="absolute left-0 right-0 top-0 h-[76px] bg-black/80" />
-
-        <header className="relative flex items-center justify-between px-8 py-5 lg:px-16">
-          <Link
-            href="/"
-            className="pointer-events-auto text-base font-semibold tracking-tight text-white transition hover:text-white/80"
-          >
-            LLM Bench
-          </Link>
-          <div className="pointer-events-auto flex items-center gap-3">
+        <header className="relative flex items-center justify-between px-8 py-6 lg:px-16">
+          <div className="pointer-events-auto flex items-center gap-2">
+            <span className="text-base font-semibold tracking-tight text-white">LLM Bench</span>
+          </div>
+          <nav className="pointer-events-auto flex items-center gap-6">
             <Link
               href="/learn-more"
-              className="rounded-md border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white hover:text-[#080705]"
+              className="text-sm font-medium text-white/80 transition hover:text-white"
             >
-              View Features
+              Learn More
             </Link>
-            <Link
-              href="/login"
-              className="rounded-md border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white hover:text-[#080705]"
+            <button
+              type="button"
+              onClick={handleGetStarted}
+              className="rounded-lg border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/15"
             >
-              Log in
-            </Link>
-          </div>
+              Login
+            </button>
+          </nav>
         </header>
 
-        <main className="relative flex flex-1 items-center justify-center px-8 pb-20 pt-6 lg:px-16">
-          <div className="pointer-events-auto mx-auto flex w-full max-w-5xl flex-col items-center gap-8 text-center">
-            <h1 className="text-5xl font-light leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              Test LLMs Side-by-Side
+        <main className="relative flex flex-1 items-center justify-center px-6 pb-16 pt-4 text-center lg:px-10">
+          <div className="pointer-events-auto mx-auto flex w-full max-w-4xl flex-col items-center gap-8">
+            <h1 className="text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
+              Benchmark LLMs Effortlessly
             </h1>
-            <p className="max-w-3xl text-lg leading-relaxed text-white/85">
-              Compare GPT-4, Claude, DeepSeek, and more in real-time. See response quality, track costs, measure latency.
-              One prompt, multiple models, instant insights.
+            <p className="max-w-2xl text-lg text-white/85">
+              Launch LLM Bench, compare providers, and get to the right model in minutes.
             </p>
 
-
-            {/* Input Box */}
-            <form onSubmit={handleSubmit} className="w-full max-w-2xl">
-              <div className="relative rounded-xl border border-white/20 bg-black/50 p-4 shadow-2xl">
-                <textarea
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Enter a prompt to test across models..."
-                  rows={3}
-                  className="w-full resize-none bg-transparent text-sm text-white/90 placeholder-white/40 outline-none"
-                />
-
-                {/* Send Button */}
-                <div className="mt-3 flex justify-end">
-                  <button
-                    type="submit"
-                    disabled={!inputValue.trim()}
-                    className="rounded-lg border border-white/30 bg-white p-2 text-black transition hover:bg-white/90 disabled:opacity-50"
-                  >
-                    <Send className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </form>
-
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleGetStarted}
+                className="rounded-xl bg-white px-6 py-3 text-base font-semibold text-[#0a0a0a] shadow-[0_10px_30px_rgba(255,255,255,0.2)] transition hover:-translate-y-0.5 hover:bg-white/90"
+              >
+                Get Started
+              </button>
+              <Link
+                href="/learn-more"
+                className="rounded-xl border border-white/25 bg-white/10 px-6 py-3 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/20"
+              >
+                Learn More
+              </Link>
+            </div>
           </div>
         </main>
       </div>

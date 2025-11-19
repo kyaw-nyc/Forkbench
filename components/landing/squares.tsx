@@ -121,16 +121,33 @@ export default function Squares({
       hoveredSquare.current = null
     }
 
-    canvas.addEventListener('mousemove', handleMouseMove)
-    canvas.addEventListener('mouseleave', handleMouseLeave)
+    // Use window listeners so hover works even if the canvas has pointer-events disabled.
+    const handleWindowMouseMove = (event: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect()
+      const isInside =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+
+      if (!isInside) {
+        hoveredSquare.current = null
+        return
+      }
+
+      handleMouseMove(event)
+    }
+
+    window.addEventListener('mousemove', handleWindowMouseMove)
+    window.addEventListener('mouseleave', handleMouseLeave)
 
     animationRef.current = requestAnimationFrame(updateAnimation)
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
-      canvas.removeEventListener('mousemove', handleMouseMove)
-      canvas.removeEventListener('mouseleave', handleMouseLeave)
+      window.removeEventListener('mousemove', handleWindowMouseMove)
+      window.removeEventListener('mouseleave', handleMouseLeave)
     }
   }, [direction, speed, borderColor, hoverFillColor, squareSize])
 

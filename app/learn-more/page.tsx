@@ -1,18 +1,8 @@
 import Link from 'next/link'
-import Squares from '@/components/landing/squares'
 
 export default function LearnMorePage() {
   return (
     <div className="relative isolate min-h-screen w-full overflow-hidden bg-black text-white">
-      <Squares
-        direction="diagonal"
-        speed={0.45}
-        squareSize={46}
-        borderColor="rgba(255,255,255,0.14)"
-        hoverFillColor="rgba(255,255,255,0.06)"
-        className="pointer-events-none absolute inset-0 opacity-90"
-      />
-
       <div className="pointer-events-none relative z-10 flex min-h-screen flex-col">
         <div className="absolute left-0 right-0 top-0 h-[76px] bg-black/80" />
 
